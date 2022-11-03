@@ -1,4 +1,5 @@
-*
+/*
 !.gitignore
-!Scripts/
-!Scenes
+!/Scripts/*
+!/Scenes/*
+!README.md

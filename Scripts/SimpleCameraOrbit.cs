@@ -10,11 +10,11 @@ public class SimpleCameraOrbit : MonoBehaviour
     private int touchCount = 0;
     private Vector2 lastMousePosition;
     private float lastTouchesDistances;
-    float ZOOM_FACTOR = 0.1f;
-    float MINUMIN_DISTANCE_ZOOM = 5f;
+    float ZOOM_FACTOR = 0.5f;
+    float MINUMIN_DISTANCE_ZOOM = 10f;
     float Y_ROTATATION_FACTOR = 2f;
     float X_ROTATION_FACTOR = 2f;
-    float MOVEMENT_SPEED = 0.7f;
+    float MOVEMENT_SPEED = 0.3f;
 
     bool move(){
        // Touch touch1 = Input.GetTouch(0), touch2 = Input.GetTouch(1);
@@ -67,7 +67,8 @@ public class SimpleCameraOrbit : MonoBehaviour
         if(Mathf.Abs(zoomVal) < MINUMIN_DISTANCE_ZOOM)
             return false;
 
-        camera.fieldOfView += zoomVal * ZOOM_FACTOR * Time.deltaTime;
+        transform.Translate(0,0, -zoomVal * ZOOM_FACTOR * Time.deltaTime);
+        lastTouchesDistances = Vector2.Distance(touch1.position, touch2.position);
         return true;
     }
 

@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class MoveObject : MonoBehaviour
 {
-    public GameObject refPlane;
-    public enum MovementState{
-        NO_TARGET,
-        CLICK_IN_PLANE,
-        MOVE_IN_Y,
-        ROTATE
-    };
+    SimpleCameraOrbit cameraNavigation;
 
     public GameObject selectedObject = null;
     public GameObject target = null;
@@ -18,51 +12,34 @@ public class MoveObject : MonoBehaviour
     float plane_height = 0;
     Plane plane;
 
-    public MovementState state = MovementState.NO_TARGET;
-
     public bool isMouseDown = false;
     Vector2 lastMousePosition;
+    float lastTouchesDistances;
+    float MINUMIN_DISTANCE_MOVE_Y = 5f;
 
-    const float MOVE_Y_FACTOR = 1f;
+    const float MOVE_Y_FACTOR = 0.1f;
 
     const float ROTATION_FACTOR = 100f;
 
+    float Y_ROTATATION_FACTOR = 2f;
+    float X_ROTATION_FACTOR = 2f;
+
+    float TOUCH_TOLERANCE = 1f;
+
     int rotation_axis = 0;
+
+    Vector2 startTouchPos;
 
     void Start()
     {
+        cameraNavigation = this.GetComponent<SimpleCameraOrbit>();
         plane = new Plane(Vector3.up, new Vector3(0,plane_height,0));
     }
 
-    
-    public void setState(string newState){
-        if((target != null) && (selectedObject != null))
-            Debug.Log(Vector3.Distance(selectedObject.transform.position, target.transform.position));
-
-        switch(newState){
-            case "MXZ":
-                state = MovementState.CLICK_IN_PLANE;
-                break;
-            case "MY":
-                state = MovementState.MOVE_IN_Y;
-                break;
-            case "RTX":
-                state = MovementState.ROTATE;
-                rotation_axis = 0;
-                break;
-            case "RTY":
-                state = MovementState.ROTATE;
-                rotation_axis = 1;
-                break;
-            case "RT|":
-                state = MovementState.ROTATE;
-                rotation_axis = 2;
-                break;
-        }
-    }
 
     void moveTargetToIntersectionWithPlane(){
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Touch touch = Input.GetTouch(0);
+        Ray ray = Camera.main.ScreenPointToRay(touch.position);
         
         float enter = 0.0f;
 
@@ -70,66 +47,96 @@ public class MoveObject : MonoBehaviour
 
         Vector3 hitPoint = ray.GetPoint(enter);
 
-        refPlane.transform.position = hitPoint;
-
-        if(Input.GetMouseButtonDown(0)) isMouseDown = true;
-        else if(isMouseDown && Input.GetMouseButtonUp(0)){ 
-            isMouseDown = false;
-            state = MovementState.MOVE_IN_Y;
-        }
-        
-        if(isMouseDown)
-            selectedObject.transform.position = new Vector3(hitPoint.x, plane_height, hitPoint.z);
+        selectedObject.transform.position = new Vector3(hitPoint.x, plane_height, hitPoint.z);
 
     }
 
-    void moveInY(){
-        if(Input.GetMouseButtonDown(0)){
-            isMouseDown = true;
-            lastMousePosition = Input.mousePosition;
+    bool moveInY(){
+        Touch touch1 = Input.GetTouch(0), touch2 = Input.GetTouch(1);
+        if(touch1.phase == TouchPhase.Began || touch2.phase == TouchPhase.Began){
+            lastTouchesDistances = Vector2.Distance(touch1.position, touch2.position);
+            lastMousePosition = touch1.position;
+            return true;
         }
-        else if(isMouseDown && Input.GetMouseButtonUp(0)){ 
-            isMouseDown = false;
-            plane = new Plane(Vector3.up, new Vector3(0, plane_height ,0));
-            state = MovementState.ROTATE;
-        }
-        if(!isMouseDown) return;
-        float dy = (Input.mousePosition.y - lastMousePosition.y)*MOVE_Y_FACTOR*Time.deltaTime;
+        if(touch1.phase != TouchPhase.Moved || touch2.phase != TouchPhase.Moved)
+            return false;
+        
+        float zoomVal = lastTouchesDistances - Vector2.Distance(touch1.position, touch2.position);
+        if(Mathf.Abs(zoomVal) < MINUMIN_DISTANCE_MOVE_Y)
+            return false;
+
+        float dy = -zoomVal*MOVE_Y_FACTOR*Time.deltaTime;
         selectedObject.transform.Translate(0,dy,0);
         plane_height += dy;
+        plane = new Plane(Vector3.up, new Vector3(0, plane_height ,0));
 
-        lastMousePosition = Input.mousePosition;
+        lastTouchesDistances = Vector2.Distance(touch1.position, touch2.position);
+        return true;
     }
 
-    void rotate(){
+    bool rotate(){
 
-        if(Input.GetMouseButtonDown(2)) rotation_axis = (rotation_axis + 1) % 3;
+        Touch touch = Input.GetTouch(0);
+        if(touch.phase == TouchPhase.Began){
+            lastMousePosition = touch.position;
+            return true;
+        }
+        if(touch.phase != TouchPhase.Moved)
+            return false;
+        
+        if(Mathf.Abs(touch.position.x - lastMousePosition.x) > Mathf.Abs(touch.position.y - lastMousePosition.y))
+            selectedObject.transform.Rotate(0, -(touch.position.x - lastMousePosition.x) *  Y_ROTATATION_FACTOR * Time.deltaTime, 0);
+        else
+            selectedObject.transform.Rotate(-(touch.position.y - lastMousePosition.y) * X_ROTATION_FACTOR * Time.deltaTime, 0, 0);
 
-        float rotation = Input.mouseScrollDelta.y * ROTATION_FACTOR * Time.deltaTime * 2 * Mathf.PI;
+        lastMousePosition = touch.position;
+        
+        return true;
+    }
 
-        selectedObject.transform.Rotate(rotation*(rotation_axis == 0 ? 1 : 0),
-                                rotation*(rotation_axis == 1 ? 1 : 0),
-                                rotation*(rotation_axis == 2 ? 1 : 0));
+    void selectObject(Touch touch){
+        
+        Ray ray = Camera.main.ScreenPointToRay(touch.position);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit)){
+            if(hit.transform.gameObject.GetComponent<ClickableOjbect>() != null){
+                selectedObject = hit.transform.gameObject;
+            }
+            else
+                selectedObject = null;
+        }
+        else{
+            selectedObject = null;
+        }
+        cameraNavigation.active = selectedObject == null;
     }
 
     void Update(){
-        // Debug.DrawRay(Camera.main.transform.position, Camera.main.ScreenPointToRay(Input.mousePosition).direction*3, Color.red, 0);
-        // DrawPlane(new Vector3(0,plane_height,0) ,plane.normal);
-        // switch(state){
-        //     case MovementState.NO_TARGET:
-        //         if(selectedObject != null)
-        //             state = MovementState.CLICK_IN_PLANE;
-        //         break;
-        //     case MovementState.CLICK_IN_PLANE:
-        //         moveTargetToIntersectionWithPlane();
-        //         break;
-        //     case MovementState.MOVE_IN_Y:
-        //         moveInY();
-        //         break;
-        //     case MovementState.ROTATE:
-        //         rotate();
-        //         break;
-        // }
+        int touchCount = Input.touchCount;
+        if(touchCount <= 0) return;
+        Touch touch = Input.GetTouch(0);
+        if(touch.phase == TouchPhase.Began){
+            startTouchPos = touch.position;
+            return;
+        }
+        if(touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled){
+            if(Vector2.Distance(touch.position, startTouchPos) < TOUCH_TOLERANCE)
+            selectObject(touch);
+            return;
+        }
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.ScreenPointToRay(touch.position).direction*3, Color.red, 0);
+        DrawPlane(new Vector3(0,plane_height,0) ,plane.normal);
+        if(selectedObject == null) return;
+
+        switch(touchCount){
+            case 1:
+                moveTargetToIntersectionWithPlane();
+                break;
+            case 2:
+                if(moveInY()) return;
+                rotate();
+                break;
+        }
     }
 
 

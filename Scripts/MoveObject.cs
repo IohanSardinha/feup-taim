@@ -39,6 +39,9 @@ public class MoveObject : MonoBehaviour
 
     void moveTargetToIntersectionWithPlane(){
         Touch touch = Input.GetTouch(0);
+        
+        if(touch.phase != TouchPhase.Moved) return;
+        
         Ray ray = Camera.main.ScreenPointToRay(touch.position);
         
         float enter = 0.0f;
@@ -94,6 +97,17 @@ public class MoveObject : MonoBehaviour
         return true;
     }
 
+    void selectObject(){
+        if(selectedObject != null)
+            selectedObject.GetComponent<ClickableOjbect>().select();
+        
+    }
+
+    void unselectObject(){
+        if(selectedObject != null)
+            selectedObject.GetComponent<ClickableOjbect>().unselect();
+    }
+
     void selectObject(Touch touch){
         
         Ray ray = Camera.main.ScreenPointToRay(touch.position);
@@ -101,11 +115,15 @@ public class MoveObject : MonoBehaviour
         if (Physics.Raycast(ray, out hit)){
             if(hit.transform.gameObject.GetComponent<ClickableOjbect>() != null){
                 selectedObject = hit.transform.gameObject;
+                selectObject();
             }
-            else
+            else{
+                unselectObject();
                 selectedObject = null;
+            }
         }
         else{
+            unselectObject();
             selectedObject = null;
         }
         cameraNavigation.active = selectedObject == null;

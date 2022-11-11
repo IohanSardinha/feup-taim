@@ -547,6 +547,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1d9cfbc7abc1a301a39b988eccd11ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedMaterial: {fileID: 2100000, guid: 8b5bbadd688ee00a89c9f7c7c3da9b04, type: 2}
+  originalMaterial: {fileID: 2100000, guid: 1dfd220999cc11a4584e77b40552045c, type: 2}
+  objects:
+  - {fileID: 1466101187}
 --- !u!65 &1085783054
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -645,6 +649,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af82f2223dc38a644a51dd2d3d1955b1, type: 3}
+--- !u!1 &1466101187 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8164078558771037576, guid: af82f2223dc38a644a51dd2d3d1955b1, type: 3}
+  m_PrefabInstance: {fileID: 1763741864}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1521372329
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -758,6 +767,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2db235bd44c0b044b4ad370b8d98f48, type: 3}
+--- !u!1 &1708363984 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 243041194690276544, guid: e2db235bd44c0b044b4ad370b8d98f48, type: 3}
+  m_PrefabInstance: {fileID: 324687046}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1741361784 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3133498875991405556, guid: e2db235bd44c0b044b4ad370b8d98f48, type: 3}
+  m_PrefabInstance: {fileID: 324687046}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1763741864
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -832,7 +851,7 @@ PrefabInstance:
     - target: {fileID: -7635826562936255635, guid: af82f2223dc38a644a51dd2d3d1955b1, type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 1717560292368333669, guid: e2db235bd44c0b044b4ad370b8d98f48, type: 3}
+      objectReference: {fileID: 2100000, guid: 1dfd220999cc11a4584e77b40552045c, type: 2}
     - target: {fileID: 919132149155446097, guid: af82f2223dc38a644a51dd2d3d1955b1, type: 3}
       propertyPath: m_Name
       value: bunny
@@ -928,6 +947,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1d9cfbc7abc1a301a39b988eccd11ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedMaterial: {fileID: 2100000, guid: 8b5bbadd688ee00a89c9f7c7c3da9b04, type: 2}
+  originalMaterial: {fileID: 2100000, guid: 0038de50b2c024e458ce89c8223917ef, type: 2}
+  objects:
+  - {fileID: 1741361784}
+  - {fileID: 1708363984}
 --- !u!65 &1867019229
 BoxCollider:
   m_ObjectHideFlags: 0

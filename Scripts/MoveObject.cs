@@ -113,23 +113,23 @@ public class MoveObject : MonoBehaviour
     }
 
     void Update(){
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.ScreenPointToRay(Input.mousePosition).direction*3, Color.red, 0);
-        DrawPlane(new Vector3(0,plane_height,0) ,plane.normal);
-        switch(state){
-            case MovementState.NO_TARGET:
-                if(selectedObject != null)
-                    state = MovementState.CLICK_IN_PLANE;
-                break;
-            case MovementState.CLICK_IN_PLANE:
-                moveTargetToIntersectionWithPlane();
-                break;
-            case MovementState.MOVE_IN_Y:
-                moveInY();
-                break;
-            case MovementState.ROTATE:
-                rotate();
-                break;
-        }
+        // Debug.DrawRay(Camera.main.transform.position, Camera.main.ScreenPointToRay(Input.mousePosition).direction*3, Color.red, 0);
+        // DrawPlane(new Vector3(0,plane_height,0) ,plane.normal);
+        // switch(state){
+        //     case MovementState.NO_TARGET:
+        //         if(selectedObject != null)
+        //             state = MovementState.CLICK_IN_PLANE;
+        //         break;
+        //     case MovementState.CLICK_IN_PLANE:
+        //         moveTargetToIntersectionWithPlane();
+        //         break;
+        //     case MovementState.MOVE_IN_Y:
+        //         moveInY();
+        //         break;
+        //     case MovementState.ROTATE:
+        //         rotate();
+        //         break;
+        // }
     }
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class ClickableOjbect : MonoBehaviour{
     
+    public GameObject target;
     public Material selectedMaterial;
     public Material originalMaterial;
     

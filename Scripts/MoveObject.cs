@@ -98,13 +98,13 @@ public class MoveObject : MonoBehaviour
 
         Debug.Log(Vector2.Angle(touch1Dir, touch2Dir));
 
-        if(Vector2.Angle(touch1Dir, touch2Dir) < 90)
+        if(Vector2.Angle(touch1Dir, touch2Dir) < 30)
             return false;
 
         float dy = zoomVal*MOVE_Y_FACTOR*Time.deltaTime;
 
         if(transform.localEulerAngles.x < 15 || transform.localEulerAngles.x > 345){
-            selectedObject.transform.Translate(transform.forward*dy);
+            selectedObject.transform.position += transform.forward*dy;
             rotationAxis.transform.position = selectedObject.transform.position;
             return true;
         }

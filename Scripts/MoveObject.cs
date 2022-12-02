@@ -96,8 +96,6 @@ public class MoveObject : MonoBehaviour
         Vector2 touch1Dir = touch1.position - touch1PrevPos;
         Vector2 touch2Dir = touch2.position - touch2PrevPos;
 
-        Debug.Log(Vector2.Angle(touch1Dir, touch2Dir));
-
         if(Vector2.Angle(touch1Dir, touch2Dir) < 30)
             return false;
 
@@ -198,8 +196,12 @@ public class MoveObject : MonoBehaviour
         if(selectedObject != null){
             rotationAxis.SetActive(true);
             
-            ui.text = "distance: "+Mathf.Round(Vector3.Distance(target.transform.position, selectedObject.transform.position)*10000)/100+"cm, "+Mathf.Ceil(Vector3.Angle(selectedObject.transform.forward, target.transform.forward))+"º";
-            if(!set.Contains(selectedObject.name) && Vector3.Angle(selectedObject.transform.forward, target.transform.forward) < 2 && (Vector3.Distance(target.transform.position, selectedObject.transform.position)*100) <= 2){
+            ui.text = "distance: "+Mathf.Round(Vector3.Distance(target.transform.position, selectedObject.transform.position)*10000)/100+"cm, "+Mathf.Ceil(Quaternion.Angle(selectedObject.transform.rotation, target.transform.rotation))+"º";
+            if(Quaternion.Angle(selectedObject.transform.rotation, target.transform.rotation) <= 2 && (Vector3.Distance(target.transform.position, selectedObject.transform.position)*100) <= 2)
+                ui.color = Color.green;
+            else
+                ui.color = Color.red;
+            if(!set.Contains(selectedObject.name) && Quaternion.Angle(selectedObject.transform.rotation, target.transform.rotation) <= 2 && (Vector3.Distance(target.transform.position, selectedObject.transform.position)*100) <= 2){
                 Instantiate(bloom, selectedObject.transform.position, selectedObject.transform.rotation);
                 set.Add(selectedObject.name);
             }           
